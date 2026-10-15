@@ -1,0 +1,6 @@
+.build/
+.swiftpm/
+Ecritoire.app/
+.DS_Store
+Resources/AppIcon.iconset/
+Local/
