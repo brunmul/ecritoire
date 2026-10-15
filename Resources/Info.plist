@@ -2,24 +2,41 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key><string>Écritoire</string>
-	<key>CFBundleDisplayName</key><string>Écritoire</string>
-	<key>CFBundleIdentifier</key><string>io.github.brunmul.ecritoire</string>
-	<key>CFBundleExecutable</key><string>Ecritoire</string>
-	<key>CFBundleIconFile</key><string>AppIcon</string>
-	<key>CFBundlePackageType</key><string>APPL</string>
-	<key>CFBundleShortVersionString</key><string>0.1</string>
-	<key>CFBundleVersion</key><string>1</string>
-	<key>CFBundleDevelopmentRegion</key><string>fr</string>
-	<key>LSMinimumSystemVersion</key><string>14.0</string>
-	<key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
-	<key>NSHighResolutionCapable</key><true/>
-	<key>NSPrincipalClass</key><string>NSApplication</string>
-	<!-- Mises à jour (Sparkle) : flux des versions publiées sur GitHub, signées en EdDSA, vérifiées une fois par jour. -->
-	<key>SUFeedURL</key><string>https://github.com/brunmul/ecritoire/releases/latest/download/appcast.xml</string>
-	<key>SUPublicEDKey</key><string>/VjTqb4n1AWxKKLSiXLjqfDNMLP55EpGShacoKFpG9I=</string>
-	<key>SUEnableAutomaticChecks</key><true/>
-	<key>SUAutomaticallyUpdate</key><true/>
-	<key>SUScheduledCheckInterval</key><integer>86400</integer>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>fr</string>
+	<key>CFBundleDisplayName</key>
+	<string>Écritoire</string>
+	<key>CFBundleExecutable</key>
+	<string>Ecritoire</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleIdentifier</key>
+	<string>io.github.brunmul.ecritoire</string>
+	<key>CFBundleName</key>
+	<string>Écritoire</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1</string>
+	<key>CFBundleVersion</key>
+	<string>2</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.0</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>SUAutomaticallyUpdate</key>
+	<true/>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://github.com/brunmul/ecritoire/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>/VjTqb4n1AWxKKLSiXLjqfDNMLP55EpGShacoKFpG9I=</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>86400</integer>
 </dict>
 </plist>
