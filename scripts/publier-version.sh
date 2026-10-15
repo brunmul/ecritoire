@@ -22,8 +22,12 @@ PLIST=Resources/Info.plist
 [[ -z "$(git status --porcelain)" ]] || { echo "Le dépôt a des modifications non enregistrées."; exit 1; }
 gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1 && { echo "La release $TAG existe déjà."; exit 1; }
 
-# Numéro de construction : +1 à chaque version (Sparkle compare CFBundleVersion).
-BUILD=$(( $(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" $PLIST) + 1 ))
+# Numéro de construction : +1 à chaque version (Sparkle compare CFBundleVersion). Si l'Info.plist porte déjà ce
+# numéro de version (reprise après un échec), il est gardé tel quel, sans nouveau commit.
+CURRENT=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" $PLIST)
+BUILD=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" $PLIST)
+BUMP=true
+if [[ "$CURRENT" == "$VERSION" ]]; then BUMP=false; else BUILD=$(( BUILD + 1 )); fi
 
 if $ESSAI; then
   # Version d'essai : construite dans une copie temporaire, le dépôt n'est pas modifié.
@@ -35,14 +39,19 @@ else
   WORK=""
 fi
 
-/usr/libexec/PlistBuddy -c "Set CFBundleShortVersionString $VERSION" $PLIST
-/usr/libexec/PlistBuddy -c "Set CFBundleVersion $BUILD" $PLIST
+if $ESSAI || $BUMP; then
+  /usr/libexec/PlistBuddy -c "Set CFBundleShortVersionString $VERSION" $PLIST
+  /usr/libexec/PlistBuddy -c "Set CFBundleVersion $BUILD" $PLIST
+fi
 
 if ! $ESSAI; then
-  git add $PLIST
-  git commit -q -m "Version $VERSION"
-  git tag "$TAG"
-  git push -q origin HEAD:main "$TAG"
+  if $BUMP; then
+    git add $PLIST
+    git commit -q -m "Version $VERSION"
+  fi
+  git tag -f "$TAG" >/dev/null
+  git push -q origin HEAD:main
+  git push -q -f origin "$TAG"
 fi
 
 ./scripts/construire-app.sh >/dev/null

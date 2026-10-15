@@ -24,6 +24,8 @@ APP="Ecritoire.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/Ecritoire"
+# Symboles de débogage retirés : ils contiennent les chemins de la machine de construction.
+strip -S -x "$APP/Contents/MacOS/Ecritoire"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 # Polices libres de repli (quand Walbaum n'est pas installée).
@@ -34,6 +36,8 @@ ditto "$BIN_DIR/Sparkle.framework" "$APP/Contents/Frameworks/Sparkle.framework"
 otool -l "$APP/Contents/MacOS/Ecritoire" | awk '/LC_RPATH/{getline; getline; print $2}' | while read -r p; do
   [[ "$p" == "@executable_path/../Frameworks" ]] || install_name_tool -delete_rpath "$p" "$APP/Contents/MacOS/Ecritoire" 2>/dev/null || true
 done
+# Contrôle : aucun chemin de ce Mac dans ce qui sera distribué.
+if grep -rqa "$HOME" "$APP"; then echo "Chemin personnel ($HOME) trouvé dans $APP"; exit 1; fi
 # Signature locale (ad hoc), de l'intérieur vers l'extérieur : services de Sparkle, framework, puis l'app.
 SPK="$APP/Contents/Frameworks/Sparkle.framework/Versions/B"
 for item in "$SPK/XPCServices/Installer.xpc" "$SPK/XPCServices/Downloader.xpc" "$SPK/Autoupdate" "$SPK/Updater.app" "$APP/Contents/Frameworks/Sparkle.framework"; do
