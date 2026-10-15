@@ -8,13 +8,16 @@ enum FreeFonts {
     static let ignoreWalbaum = ProcessInfo.processInfo.environment["ECRITOIRE_SANS_WALBAUM"] != nil
 
     /// Dossier des polices : dans l'app (`Contents/Resources/Polices`), sinon dans les sources (`swift run`).
+    /// (Aucun chemin des sources n'est inscrit dans le binaire : on cherche à côté de l'exécutable, en remontant.)
     static var folder: URL? {
-        let candidates = [
-            Bundle.main.resourceURL?.appendingPathComponent("Polices"),
-            URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-                .appendingPathComponent("Resources/Polices"),
-        ].compactMap { $0 }
-        return candidates.first { FileManager.default.fileExists(atPath: $0.path) }
+        var candidates = [Bundle.main.resourceURL?.appendingPathComponent("Polices")].compactMap { $0 }
+        var dir = Bundle.main.executableURL?.deletingLastPathComponent()
+        while let d = dir, d.path != "/" {
+            candidates.append(d.appendingPathComponent("Resources/Polices"))
+            dir = d.deletingLastPathComponent()
+        }
+        candidates.append(URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("Resources/Polices"))
+        return candidates.first { FileManager.default.fileExists(atPath: $0.appendingPathComponent("LibreBodoni.ttf").path) }
     }
 
     private static var registered = false

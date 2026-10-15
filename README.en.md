@@ -47,6 +47,18 @@ Checks: `swift build && swift run EcritoireVerifs`.
 Without Xcode there are two constraints: no SwiftUI `@State`, and no XCTest or Swift Testing (their macros only
 ship with Xcode). The checks are therefore an executable, `EcritoireVerifs`.
 
+## Updates
+
+The app checks once a day for a new version (menu **Écritoire → Rechercher les mises à jour…**), downloads it and
+installs it by itself, thanks to [Sparkle](https://sparkle-project.org) (MIT licence). Versions are published as
+[GitHub releases](https://github.com/brunmul/ecritoire/releases), signed with EdDSA.
+
+The app is not signed by Apple: the first time you open a downloaded version, right-click it → Open
+(on macOS 15 and later: System Settings → Privacy & Security → “Open Anyway”).
+
+Publishing a version (maintainer): `./scripts/publier-version.sh 0.2`. The private signing key stays in the
+maintainer's Mac keychain, never in the repository.
+
 ## Fonts
 
 Écritoire uses **Walbaum** and **Walbaum Grotesk** when they are installed on the Mac. They are commercial

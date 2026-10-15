@@ -10,11 +10,16 @@ let package = Package(
         .executable(name: "Ecritoire", targets: ["Ecritoire"]),
         .executable(name: "importer-scrivener", targets: ["ImporterScrivener"]),
     ],
+    dependencies: [
+        // Mises à jour automatiques (licence MIT) : vérification quotidienne, téléchargement et installation signés.
+        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.6.0"),
+    ],
     targets: [
         // Logique sans interface : en-tête YAML, fichiers .order, opérations sur le classeur, surveillance du disque.
         .target(name: "EcritoireCore"),
         // Application SwiftUI + AppKit.
-        .executableTarget(name: "Ecritoire", dependencies: ["EcritoireCore", "ScrivenerImport"]),
+        .executableTarget(name: "Ecritoire", dependencies: ["EcritoireCore", "ScrivenerImport", .product(name: "Sparkle", package: "Sparkle")],
+                          linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"])]),
         // Import de projets Scrivener 3 (.scriv) : bibliothèque + outil en ligne de commande.
         .target(name: "ScrivenerImport", dependencies: ["EcritoireCore"]),
         .executableTarget(name: "ImporterScrivener", dependencies: ["ScrivenerImport"]),

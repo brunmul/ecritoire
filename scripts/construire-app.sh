@@ -14,8 +14,11 @@ if [[ ! -f Resources/AppIcon.icns || Resources/AppIcon.png -nt Resources/AppIcon
   iconutil -c icns Resources/AppIcon.iconset -o Resources/AppIcon.icns
 fi
 
-swift build -c release --product Ecritoire
-BIN="$(swift build -c release --show-bin-path)/Ecritoire"
+# Chemins des sources réécrits en chemins relatifs : le binaire ne contient aucun chemin de ce Mac.
+BUILD_FLAGS=(-c release -Xswiftc -file-prefix-map -Xswiftc "$PWD=.")
+swift build "${BUILD_FLAGS[@]}" --product Ecritoire
+BIN_DIR="$(swift build "${BUILD_FLAGS[@]}" --show-bin-path)"
+BIN="$BIN_DIR/Ecritoire"
 
 APP="Ecritoire.app"
 rm -rf "$APP"
@@ -25,7 +28,17 @@ cp Resources/Info.plist "$APP/Contents/Info.plist"
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 # Polices libres de repli (quand Walbaum n'est pas installée).
 cp -R Resources/Polices "$APP/Contents/Resources/Polices"
-# Signature locale (ad hoc) : suffisante pour lancer l'app sur ce Mac.
+# Sparkle (mises à jour) : framework embarqué ; seul chemin de recherche gardé : Contents/Frameworks.
+mkdir -p "$APP/Contents/Frameworks"
+ditto "$BIN_DIR/Sparkle.framework" "$APP/Contents/Frameworks/Sparkle.framework"
+otool -l "$APP/Contents/MacOS/Ecritoire" | awk '/LC_RPATH/{getline; getline; print $2}' | while read -r p; do
+  [[ "$p" == "@executable_path/../Frameworks" ]] || install_name_tool -delete_rpath "$p" "$APP/Contents/MacOS/Ecritoire" 2>/dev/null || true
+done
+# Signature locale (ad hoc), de l'intérieur vers l'extérieur : services de Sparkle, framework, puis l'app.
+SPK="$APP/Contents/Frameworks/Sparkle.framework/Versions/B"
+for item in "$SPK/XPCServices/Installer.xpc" "$SPK/XPCServices/Downloader.xpc" "$SPK/Autoupdate" "$SPK/Updater.app" "$APP/Contents/Frameworks/Sparkle.framework"; do
+  [[ -e "$item" ]] && codesign --force --sign - --preserve-metadata=entitlements "$item" >/dev/null
+done
 codesign --force --sign - "$APP" >/dev/null
 
 if [[ "${1:-}" == "--installer" ]]; then

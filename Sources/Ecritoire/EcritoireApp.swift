@@ -36,6 +36,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if !CommandLine.arguments.contains(where: probes.contains) {
             NSApp.activate(ignoringOtherApps: true)
         }
+        // Mises à jour : vérification automatique (une fois par jour) dès le lancement.
+        _ = Updates.shared
         // Vérification automatique : `--capture fichier.png` enregistre une image de la fenêtre puis quitte.
         let args = CommandLine.arguments
         if let i = args.firstIndex(of: "--perf"), i + 1 < args.count, let n = Int(args[i + 1]) {
@@ -167,6 +169,10 @@ struct EcritoireApp: App {
         }
         .defaultSize(width: 1200, height: 800)
         .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Rechercher les mises à jour…") { Updates.shared.check() }
+                    .disabled(!Updates.shared.available)
+            }
             CommandGroup(replacing: .newItem) {
                 Button("Nouveau document") { workspace.newDocument() }
                     .keyboardShortcut("n")

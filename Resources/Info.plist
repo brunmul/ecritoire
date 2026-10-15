@@ -15,5 +15,11 @@
 	<key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
 	<key>NSHighResolutionCapable</key><true/>
 	<key>NSPrincipalClass</key><string>NSApplication</string>
+	<!-- Mises à jour (Sparkle) : flux des versions publiées sur GitHub, signées en EdDSA, vérifiées une fois par jour. -->
+	<key>SUFeedURL</key><string>https://github.com/brunmul/ecritoire/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key><string>/VjTqb4n1AWxKKLSiXLjqfDNMLP55EpGShacoKFpG9I=</string>
+	<key>SUEnableAutomaticChecks</key><true/>
+	<key>SUAutomaticallyUpdate</key><true/>
+	<key>SUScheduledCheckInterval</key><integer>86400</integer>
 </dict>
 </plist>
